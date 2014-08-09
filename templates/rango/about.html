@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+
+{% load static %} <!-- New line -->
+
+<html>
+
+    <head>
+        <title>Rango</title>
+    </head>
+
+    <body>
+        <h1>This is the about page! </h1>
+        Here is where you come to learn about stuff <strong>{{ boldmessage }}</strong><br />
+        <a href="/rango/">home</a><br />
+        <img src="{% static "zurf.jpg" %}" alt="Picture of Rango" /> <!-- New line -->
+    </body>
+
+</html>
