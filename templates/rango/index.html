@@ -1,18 +1,36 @@
-<!DOCTYPE html>
+{% extends 'rango/base.html' %}
 
-{% load static %} <!-- New line -->
+{% block title %}{% endblock %}
 
-<html>
 
-    <head>
-        <title>Rango</title>
-    </head>
+ {% block body_block %}
+       
+		{% if user.is_authenticated %}
+	<h1>Rango says... hello {{ user.username }}!</h1>
+		{% else %}
+	<h1>Rango says... hello world!</h1>
+		{% endif %}
+		
+		<p>Here are the top 5 categories:</p>
+        {% if categories %}
+            <ul>
+                {% for category in categories %}
+                <!-- Following line changed to add an HTML hyperlink -->
+                <li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
+                {% endfor %}
+            </ul>
+            <br />
+            <p>Here are the top 5 pages:</p>
+        {% if pages %}
+        	<ul>
+        		{% for page in pages %}
+        		<li><a href="{{page.url}}">{{ page.title}}</a></li>
+        		{% endfor %}
+        	</ul>
+        {% endif %}
+        
+       {% else %}
+            <strong>There are no categories present.</strong>
+       {% endif %}
 
-    <body>
-        <h1>Rango says...</h1>
-        hello world! <strong>{{ boldmessage }}</strong><br />
-        <a href="/rango/about/">About</a><br />
-        <img src="{% static "cat.jpg" %}" alt="Picture of Rango" /> <!-- New line -->
-    </body>
-
-</html>
+{% endblock %}  
