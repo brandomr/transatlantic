@@ -3,34 +3,42 @@
 {% block title %}{% endblock %}
 
 
- {% block body_block %}
-       
-		{% if user.is_authenticated %}
-	<h1>Rango says... hello {{ user.username }}!</h1>
-		{% else %}
-	<h1>Rango says... hello world!</h1>
-		{% endif %}
-		
-		<p>Here are the top 5 categories:</p>
-        {% if categories %}
-            <ul>
-                {% for category in categories %}
-                <!-- Following line changed to add an HTML hyperlink -->
-                <li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
-                {% endfor %}
-            </ul>
-            <br />
-            <p>Here are the top 5 pages:</p>
-        {% if pages %}
-        	<ul>
-        		{% for page in pages %}
-        		<li><a href="{{page.url}}">{{ page.title}}</a></li>
-        		{% endfor %}
-        	</ul>
-        {% endif %}
-        
-       {% else %}
-            <strong>There are no categories present.</strong>
-       {% endif %}
+{% block body_block %}
+<div class="hero-unit">
+    <h1>Transatlantic</h1>
+    <p>Link your reporting by theme.</p>
+</div>
 
-{% endblock %}  
+
+<div class="row-fluid">
+    <div class="span5">
+        <h2>Trending Stories</h2>
+        {% if categories %}
+        <ul>
+            {% for category in categories %}
+            <li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <strong>No categories at present.</strong>
+        {% endif %}
+
+    </div>
+    <!--/span-->
+    <div class="span6">
+        <h2>Trending Notes</h2>
+        {% if pages %}
+        <ul>
+            {% for page in pages %}
+            <li><a href="{{ page.url}}">{{ page.title }}</a> - {{ page.category }} </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <strong>No pages at present.</strong>
+        {% endif %}
+
+    </div>
+    <!--/span-->
+</div>
+<!--/row-->
+{% endblock %}

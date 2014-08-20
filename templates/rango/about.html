@@ -5,14 +5,29 @@
 {% block title %}About Transatlantic{% endblock %}
 
 {% block body_block %}
+<div class="hero-unit">
 
 
 
-        <h1>This is the about page! </h1>
-        Here is where you come to learn about stuff 
+        <h1>Welcome to Transatlantic! </h1>
         </br>
-        <strong>{{ boldmessage }}</strong><br />
+        This is a prototype micro-reporting app designed to allow you to link your reporting by a common thread: a storyline.
+        Have you ever noticed that we send a lot of "update" or "sitrep" e-mails? These e-mails take decontextualized chunks of
+        information and push them to users. 
         
-        <img src="{% static "cat.jpg" %}" alt="Picture of Rango" /> <!-- New line -->
- 
+        <h3>Transatlantic is different</h3>
+        Our idea is that you can string breaking news or daily activity together along a story line. We call this snippets 
+        "notes." A series of notes, in combination, gives a broader picture of a story's arc. So get reporting!
+        </br>        
+       <!-- <img src="{% static "cat.jpg" %}" alt="Picture of Cat" /> here is how I added a photo! -->
+ 		</br>
+ 		
+ 		<strong>
+ 		{% if user.is_authenticated %}
+		{{ user.username }}, you
+		{% else %}
+		You 
+		{% endif %}
+		have visited this site {{ visits }} {{ visit_language }}!<strong>
+ </div>		 
 {% endblock %}  
