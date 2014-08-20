@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from datetime import datetime
 
 # Create your models here.
 
@@ -12,17 +12,6 @@ class Category(models.Model):
 	def __unicode__(self):
 		return self.name
 
-class Page(models.Model):
-	category = models.ForeignKey(Category)
-	title = models.CharField(max_length=128)
-	url = models.URLField()
-	content = models.CharField(max_length=1000)
-	views = models.IntegerField(default=0)
-	likes = models.IntegerField(default=0)
-	
-	def __unicode__(self):
-		return self.title
-		
 class UserProfile(models.Model):
     # This line is required. Links UserProfile to a User model instance.
     user = models.OneToOneField(User)
@@ -30,7 +19,24 @@ class UserProfile(models.Model):
     # The additional attributes we wish to include.
     website = models.URLField(blank=True)
     picture = models.ImageField(upload_to='profile_images', blank=True)
-
+    bio = models.CharField(max_length=250, default="")
+    location = models.CharField(max_length=100,  default="")
+	
     # Override the __unicode__() method to return out something meaningful!
     def __unicode__(self):
         return self.user.username
+
+
+class Page(models.Model):
+	category = models.ForeignKey(Category)
+	title = models.CharField(max_length=128)
+	url = models.URLField()
+	content = models.CharField(max_length=1000)
+	views = models.IntegerField(default=0)
+	likes = models.IntegerField(default=0)
+	drafter = models.ForeignKey(User, default='AnonymousUser')
+	date = models.DateTimeField(default=datetime.now())
+	
+	def __unicode__(self):
+		return self.title
+		

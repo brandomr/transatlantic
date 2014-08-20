@@ -3,7 +3,9 @@ from django.contrib.auth.models import User
 from rango.models import Page, Category, UserProfile
 
 class CategoryForm(forms.ModelForm):
-    name = forms.CharField(max_length=128, help_text="Please enter the category name.")
+    name = forms.CharField(max_length=128, help_text="Please enter the category name.",
+    			widget = forms.TextInput(
+    			attrs = {'size': '75'}))
     views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
     likes = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 
@@ -13,10 +15,17 @@ class CategoryForm(forms.ModelForm):
         model = Category
 
 class PageForm(forms.ModelForm):
-    title = forms.CharField(max_length=128, help_text="Please enter the title of the page.")
-    url = forms.URLField(max_length=200, help_text="Please enter the URL of the page.")
-    content = forms.CharField(max_length=1000, help_text="Please enter the content of the page.")
+    title = forms.CharField(max_length=128, help_text="What's the title of your note?",
+    			widget = forms.TextInput(
+    			attrs = {'size': '75'}))
+    url = forms.URLField(max_length=200, help_text="Want to link to something?",
+    			widget = forms.TextInput(
+    			attrs = {'size': '75'}))
     views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
+    drafter = forms.CharField(widget=forms.HiddenInput(), initial="")
+    content = forms.CharField(max_length=1000, help_text="Tell the story.",
+    			widget = forms.Textarea(
+    			attrs = {'rows': '6', 'cols':'75'}))
     likes = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 
     class Meta:
@@ -27,7 +36,7 @@ class PageForm(forms.ModelForm):
         # This way we don't need every field in the model present.
         # Some fields may allow NULL values, so we may not want to include them...
         # Here, we are hiding the foreign key.
-        fields = ('title', 'url', 'views')
+        fields = ('title', 'url', 'content', 'views', 'drafter')
 
 
     def clean(self):
@@ -40,16 +49,32 @@ class PageForm(forms.ModelForm):
             cleaned_data['url'] = url
 
         return cleaned_data
-        
-        
+   
+
 class UserForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput())
+    username = forms.CharField(help_text="Please enter a username.",
+        		widget = forms.TextInput(
+    			attrs = {'size': '75'}))
+    email = forms.CharField(help_text="Please enter your email.",
+        		widget = forms.TextInput(
+    			attrs = {'size': '75'}))
+    password = forms.CharField(help_text="Please enter a password.",
+        		widget = forms.PasswordInput(
+    			attrs = {'size': '75'}))
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ['username', 'email', 'password']
 
 class UserProfileForm(forms.ModelForm):
+    location = forms.CharField(help_text="Please enter your location or post.", required=False,
+        		widget = forms.TextInput(
+    			attrs = {'size': '75'}))
+    bio = forms.CharField(help_text="Tell us about yourself.", required=False,
+    			widget = forms.Textarea(
+    			attrs = {'rows': '6', 'cols':'75'}))
+    picture = forms.ImageField(help_text="Select a profile image to upload.", required=False)
+
     class Meta:
         model = UserProfile
-        fields = ('website', 'picture')
+        fields = ['location', 'bio', 'picture']
