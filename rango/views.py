@@ -18,11 +18,26 @@ def decode_url(url):
 	return decoded_url
 
 
+
+################### Category Listing ###############
+
+def get_category_list():
+	cat_list = Category.objects.all()
+	
+	for cat in cat_list:
+		cat.url = encode_url(cat.name)
+	
+	return cat_list
+
+
+
 def index(request):
     context = RequestContext(request)
+    cat_list = get_category_list()
 
     category_list = Category.objects.all()
     context_dict = {'categories': category_list}
+    context_dict['cat_list'] = cat_list
 
     for category in category_list:
         category.url = encode_url(category.name)
@@ -53,6 +68,7 @@ def about(request):
     # Request the context of the request.
     # The context contains information such as the client's machine details, for example.
 	context = RequestContext(request)
+	cat_list = get_category_list()
 
     # Construct a dictionary to pass to the template engine as its context.
     # Note the key boldmessage is the same as {{ boldmessage }} in the template!
@@ -72,8 +88,11 @@ def about(request):
 	context_dict = {'boldmessage': "Sup my curious one!",
     				'visits': count,
     				'visit_language': visit_language}
+    
 
 
+	context_dict['cat_list'] = cat_list
+	
     # Return a rendered response to send to the client.
     # We make use of the shortcut function to make our lives easier.
     # Note that the first parameter is the template we wish to use.
@@ -83,6 +102,7 @@ def about(request):
 def category(request, category_name_url):
     # Request our context from the request passed to us.
     context = RequestContext(request)
+    cat_list = get_category_list()
 
     # Change underscores in the category name to spaces.
     # URLs don't handle spaces well, so we encode them as underscores.
@@ -91,9 +111,15 @@ def category(request, category_name_url):
 		
     # Create a context dictionary which we can pass to the template rendering engine.
     # We start by containing the name of the category passed by the user.
-    context_dict = {'category_name': category_name,
-    				'category_name_url': category_name_url}
 
+    
+    context_dict = {'category_name': category_name,
+    				'category_name_url': category_name_url,
+    				'cat_list': cat_list}
+    
+
+
+	
     try:
         # Can we find a category with the given name?
         # If we can't, the .get() method raises a DoesNotExist exception.
@@ -102,17 +128,19 @@ def category(request, category_name_url):
 
         # Retrieve all of the associated pages.
         # Note that filter returns >= 1 model instance.
-        pages = Page.objects.filter(category=category)
-
+        pages = Page.objects.filter(category=category).order_by('-date')
+		
         # Adds our results list to the template context under name pages.
         context_dict['pages'] = pages
         # We also add the category object from the database to the context dictionary.
         # We'll use this in the template to verify that the category exists.
         context_dict['category'] = category
+
     except Category.DoesNotExist:
         # We get here if we didn't find the specified category.
         # Don't do anything - the template displays the "no category" message for us.
         pass
+
 
     # Go render the response and return it to the client.
     return render_to_response('rango/category.html', context_dict, context)
@@ -125,6 +153,8 @@ from rango.forms import CategoryForm
 def add_category(request):
     # Get the context from the request.
     context = RequestContext(request)
+    cat_list = get_category_list()
+
 
     # A HTTP POST?
     if request.method == 'POST':
@@ -147,7 +177,7 @@ def add_category(request):
 
     # Bad form (or form details), no form supplied...
     # Render the form with error messages (if any).
-    return render_to_response('rango/add_category.html', {'form': form}, context)
+    return render_to_response('rango/add_category.html', {'form': form, 'cat_list': cat_list}, context)
 
 
 
@@ -158,6 +188,7 @@ from django.contrib.auth.models import User
 @login_required
 def add_page(request, category_name_url):
     context = RequestContext(request)
+    cat_list = get_category_list()
 
     category_name = decode_url(category_name_url)
 
@@ -169,8 +200,6 @@ def add_page(request, category_name_url):
             # Not all fields are automatically populated!
             page = form.save(commit=False)
             
-            user = User.objects.get(id=user_id)
-
 			
             # Retrieve the associated Category object so we can add it.
             # Wrap the code in a try block - check if the category actually exists!
@@ -187,7 +216,7 @@ def add_page(request, category_name_url):
             
             page.date = datetime.now()
             
-            page.drafter =  request.user.id
+            page.drafter =  request.user
                         
 
 
@@ -203,7 +232,7 @@ def add_page(request, category_name_url):
 
     return render_to_response( 'rango/add_page.html',
             {'category_name_url': category_name_url,
-             'category_name': category_name, 'form': form},
+             'category_name': category_name, 'form': form, 'cat_list': cat_list},
              context)
              
 
@@ -215,6 +244,7 @@ from rango.forms import UserForm, UserProfileForm
 def register(request):
     # Like before, get the request's context.
     context = RequestContext(request)
+    cat_list = get_category_list()
 
     # A boolean value for telling the template whether the registration was successful.
     # Set to False initially. Code changes value to True when registration succeeds.
@@ -269,7 +299,7 @@ def register(request):
     # Render the template depending on the context.
     return render_to_response(
             'rango/register.html',
-            {'user_form': user_form, 'profile_form': profile_form, 'registered': registered},
+            {'user_form': user_form, 'profile_form': profile_form, 'registered': registered, 'cat_list': cat_list},
             context)
             
             
@@ -281,6 +311,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 def user_login(request):
     # Like before, obtain the context for the user's request.
     context = RequestContext(request)
+    cat_list = get_category_list()
 
     # If the request is a HTTP POST, try to pull out the relevant information.
     if request.method == 'POST':
@@ -316,7 +347,7 @@ def user_login(request):
     else:
         # No context variables to pass to the template system, hence the
         # blank dictionary object...
-        return render_to_response('rango/login.html', {}, context)
+        return render_to_response('rango/login.html', {'cat_list': cat_list}, context)
         
 
 ################## Login #################        
@@ -340,3 +371,25 @@ def user_logout(request):
 
     # Take the user back to the homepage.
     return HttpResponseRedirect('/rango/')
+    
+    
+    
+################### Profile View ##############
+
+@login_required
+def profile(request):
+	context = RequestContext(request)
+	cat_list = get_category_list()
+	context_dict = {'cat_list': cat_list}
+	u = User.objects.get(username=request.user)
+	
+	try:
+		up = UserProfile.objects.get(user=u)
+	except:
+		up = None
+	
+	context_dict['user'] = u
+	context_dict['userprofile'] = up
+	return render_to_response('rango/profile.html', context_dict, context)
+    
+    

@@ -3,9 +3,12 @@ from django.contrib.auth.models import User
 from rango.models import Page, Category, UserProfile
 
 class CategoryForm(forms.ModelForm):
-    name = forms.CharField(max_length=128, help_text="Please enter the category name.",
+    name = forms.CharField(max_length=128, help_text="What do you want to call this story?",
     			widget = forms.TextInput(
     			attrs = {'size': '75'}))
+    description = forms.CharField(max_length=500, help_text="Give it a brief description.",
+    			widget = forms.Textarea(
+    			attrs = {'rows': '6', 'cols':'75'}))		
     views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
     likes = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
 
@@ -22,7 +25,6 @@ class PageForm(forms.ModelForm):
     			widget = forms.TextInput(
     			attrs = {'size': '75'}))
     views = forms.IntegerField(widget=forms.HiddenInput(), initial=0)
-    drafter = forms.CharField(widget=forms.HiddenInput(), initial="")
     content = forms.CharField(max_length=1000, help_text="Tell the story.",
     			widget = forms.Textarea(
     			attrs = {'rows': '6', 'cols':'75'}))
@@ -36,7 +38,7 @@ class PageForm(forms.ModelForm):
         # This way we don't need every field in the model present.
         # Some fields may allow NULL values, so we may not want to include them...
         # Here, we are hiding the foreign key.
-        fields = ('title', 'url', 'content', 'views', 'drafter')
+        fields = ('title', 'url', 'content', 'views')
 
 
     def clean(self):
