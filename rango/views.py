@@ -382,6 +382,7 @@ def profile(request):
 	cat_list = get_category_list()
 	context_dict = {'cat_list': cat_list}
 	u = User.objects.get(username=request.user)
+	#notes = Page.objects.all()
 	
 	try:
 		up = UserProfile.objects.get(user=u)
