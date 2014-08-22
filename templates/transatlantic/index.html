@@ -1,4 +1,4 @@
-{% extends 'rango/base.html' %}
+{% extends 'transatlantic/base.html' %}
 
 {% block title %}{% endblock %}
 
@@ -16,7 +16,7 @@
         {% if categories %}
         <ul>
             {% for category in categories %}
-            <li><a href="/rango/category/{{ category.url }}">{{ category.name }}</a></li>
+            <li><a href="/transatlantic/category/{{ category.url }}">{{ category.name }}</a></li>
             {% endfor %}
         </ul>
         {% else %}
