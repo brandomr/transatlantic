@@ -28,7 +28,7 @@
                <ul class="nav pull-right">
                    {% if user.is_authenticated %}
                     <li class="navbar-text">Welcome, {{ user.username }}!</li>
-                    <li><a href="/transatlantic/profile">Profile</a></li>
+                    <li><a href="/transatlantic/{{ user.username }}/">Profile</a></li>
                     <li><a href="/transatlantic/logout/">Logout</a></li>
                    {% else %}
                     <li><a href="/transatlantic/register/">Register</a></li>
@@ -78,7 +78,7 @@
 
 <footer>
     <div class="container">
-        <p>&copy; No copyright!</p>
+        <p>Remember, this is just a prototype!</p>
     </div>
 </footer>
 

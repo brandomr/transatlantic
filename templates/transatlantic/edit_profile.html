@@ -1,0 +1,32 @@
+{% extends 'transatlantic/base.html' %}
+
+{% block body_block %}
+<div class="hero-unit">
+    <h1>Update your profile</h1>
+    <br />
+
+    <div class="container">
+      
+       <form class="form-signin span8" id="profile_form" method="post" action="/transatlantic/edit/"
+              enctype="multipart/form-data">
+
+            {% csrf_token %}
+            <!-- Display each form here -->
+
+            {% for hidden in profile_form.hidden_fields %}
+            {{ hidden }}
+            {% endfor %}
+
+            {% for field in profile_form.visible_fields %}
+            {{ field.errors }}
+            {{ field.help_text }}<br />
+            {{ field }}<br />
+            {% endfor %}
+
+            <br />
+            <!-- Provide a button to click to submit the form. -->
+            <input class="btn btn-primary" type="submit" name="submit" value="Update away"/>
+        </form>
+    </div>
+</div>
+{% endblock %}

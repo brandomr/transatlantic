@@ -1,4 +1,4 @@
-{% extends 'rango/base.html' %}
+{% extends 'transatlantic/base.html' %}
 
 {% block body_block %}
 <div class="hero-unit">
@@ -9,9 +9,9 @@
         {% if registered %}
         <p>Thank you for registering.</p>
 
-        <p><a href="/rango/login/">Login</a> when you are ready to Transatlantic.</p>
+        <p><a href="/transatlantic/login/">Login</a> when you are ready to Transatlantic.</p>
         {% else %}
-        <form class="form-signin span8" id="user_form" method="post" action="/rango/register/"
+        <form class="form-signin span8" id="user_form" method="post" action="/transatlantic/register/"
               enctype="multipart/form-data">
             {% csrf_token %}
             <h2 class="form-signin-heading">Sign up Here</h2>
@@ -20,7 +20,7 @@
             {% for field in user_form.visible_fields %}
             {{ field.errors }}
             {{ field.help_text }}<br />
-            {{ field }}<br />
+            {{ field }} <br />
             {% endfor %}
 
             {% for field in profile_form.visible_fields %}

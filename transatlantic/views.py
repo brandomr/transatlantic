@@ -3,6 +3,7 @@ from django.template import RequestContext
 from django.shortcuts import render_to_response
 from transatlantic.models import Category
 from transatlantic.models import Page
+from transatlantic.models import UserProfile
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.contrib.auth.models import User
@@ -191,8 +192,11 @@ def add_page(request, category_name_url):
     cat_list = get_category_list()
 
     category_name = decode_url(category_name_url)
+    print request.method	
 
     if request.method == 'POST':
+        print "success"	
+
         form = PageForm(request.POST)
 
         if form.is_valid():
@@ -229,6 +233,7 @@ def add_page(request, category_name_url):
             print form.errors
     else:
     	form = PageForm()
+    	print "failyo!"
 
     return render_to_response( 'transatlantic/add_page.html',
             {'category_name_url': category_name_url,
@@ -252,6 +257,7 @@ def register(request):
 
     # If it's a HTTP POST, we're interested in processing form data.
     if request.method == 'POST':
+        print "it's a POST!"
         # Attempt to grab information from the raw form information.
         # Note that we make use of both UserForm and UserProfileForm.
         user_form = UserForm(data=request.POST)
@@ -289,7 +295,8 @@ def register(request):
         # They'll also be shown to the user.
         else:
             print user_form.errors, profile_form.errors
-
+	
+	
     # Not a HTTP POST, so we render our form using two ModelForm instances.
     # These forms will be blank, ready for user input.
     else:
@@ -315,6 +322,7 @@ def user_login(request):
 
     # If the request is a HTTP POST, try to pull out the relevant information.
     if request.method == 'POST':
+    	print "a post, it is"
         # Gather the username and password provided by the user.
         # This information is obtained from the login form.
         username = request.POST['username']
@@ -376,21 +384,85 @@ def user_logout(request):
     
 ################### Profile View ##############
 
+
+
 @login_required
-def profile(request):
+def profile(request, userlink):
 	context = RequestContext(request)
 	cat_list = get_category_list()
-	context_dict = {'cat_list': cat_list}
-	u = User.objects.get(username=request.user)
-	#notes = Page.objects.all()
+	u = User.objects.get(username=userlink)
+	curr_user = User.objects.get(username=request.user)
+	notes = Page.objects.filter(drafter=u).order_by('-date')
+
+	if curr_user == u:
+		user_test = True
+	else:
+		user_test = False
+	
+	cat_link = []
+	
+	for i in range(0, len(notes)):
+		new_link = encode_url(str(notes[i].category))
+		cat_link.append(new_link)
+		i+=1
+	
+	print cat_link
+	
+	notes_cat = [(notes[i], cat_link[i]) for i in range(len(notes))]
 	
 	try:
 		up = UserProfile.objects.get(user=u)
 	except:
 		up = None
 	
-	context_dict['user'] = u
-	context_dict['userprofile'] = up
+	context_dict = {'cat_list': cat_list,
+					'userprofile': up,
+					'user': curr_user,
+					'prof_lookup': u,
+					'notes_cat': notes_cat,
+					'user_test': user_test}
+					
 	return render_to_response('transatlantic/profile.html', context_dict, context)
     
     
+################### User Profile EDIT Form ##########################
+
+from transatlantic.forms import UserForm, UserProfileForm
+from django.contrib.auth.models import User
+
+def edit(request):
+	context = RequestContext(request)
+	cat_list = get_category_list()	
+	
+	u = User.objects.get(username=request.user)	
+
+	userlink = str(request.user.username)
+	
+	try:
+		up = UserProfile.objects.get(user=u)
+	except UserProfile.DoesNotExist:
+		up = None
+	print request.method	
+	
+	if request.method == 'POST':
+		print "it's a POST!"
+		profile_form = UserProfileForm(data=request.POST, instance=up)
+		if profile_form.is_valid():
+			editprof = profile_form.save(commit=False)
+			editprof.user = u
+			if 'picture' in request.FILES:
+				editprof.picture = request.FILES['picture']
+			
+			editprof.save()
+			
+			return profile(request, userlink)
+		else:
+			print profile_form.errors
+	else:
+		profile_form = UserProfileForm(instance=up)
+	
+	return render_to_response('transatlantic/edit_profile.html', 
+            {'profile_form': profile_form, 'cat_list': cat_list, 'u': u},
+            context)
+  
+            

@@ -15,6 +15,7 @@
 </div>
 
 
+<div class="row-fluid">
 
     {% if pages %}    	
         {% for page in pages %}
@@ -22,9 +23,10 @@
         		</br>
 	 			{{page.content}}
 	 			</br>
-        		<small><span style="color:#2171b5">@{{page.drafter}} :: {{page.date}}</span></small>
-        		</br>
-        		</br>
+        		<small><span style="color:#2171b5">
+        		<a href="/transatlantic/{{page.drafter}}">@{{page.drafter}}</a> :: {{page.date}}</span></small>
+        		
+        		<hr style="height:2px; margin-bottom:8px; margin-top:8px;">
 
         
         

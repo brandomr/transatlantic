@@ -1,20 +1,55 @@
-{% extends "rango/base.html" %}
+{% extends "transatlantic/base.html" %}
+
+{% load static %} <!-- New line -->
 
 {% block title %}Profile{% endblock %}
 
 {% block body_block %}
 <div class="hero-unit">
-	<h1>@{{ user.username }}</h1>
-	<h2>Post: {{ userprofile.post }}</h2>
 	
-	{% if userprofile %}
-		<p>{{ userprofile.bio }}</p>
-		
-		</br>
-		
+	<div class="row-fluid">
+		<div class="span3">
 		{% if userprofile.picture %}
 			<img src="{{ userprofile.picture.url }}" />
+		{% else %}
+			<img src ="{% static "blank_user.png" %}" alt="Profile" />
 		{% endif %}
+		
+		</div>
+	
+		<div class="span6">
+			<h1>@{{ prof_lookup.username }}
+	
+    		
+			</h1>
+			<h2>Post: {{ userprofile.location }}</h2>
+			
+	{% if userprofile %}
+		<p>{{ userprofile.bio }}</p>
+		{% if user_test %}
+       			<a href="/transatlantic/edit/" class="btn btn-primary">Edit your profile</a>
+   			 
+   		{% endif %}
+	{% endif %}
+		</div>
+	</div>
+</div>
+
+<div class="row-fluid">
+
+    {% if notes_cat %}    	
+        {% for entry in notes_cat %}
+        		<span style="color:#8c2d04">
+        		<a href="/transatlantic/category/{{ entry.1 }}/">{{ entry.0.title }}
+        		</a></span>
+        		</br>
+	 			{{ entry.0.content }}
+	 			</br>
+        		<small><span style="color:#2171b5">
+        		<a href="/transatlantic/{{ entry.0.drafter }}">@{{ entry.0.drafter }}</a> :: {{ entry.0.date }}</span></small>
+        		<hr style="height:2px; margin-bottom:8px; margin-top:8px;">
+        		
+		{% endfor %}
 	{% endif %}
 </div>
 {% endblock %}
