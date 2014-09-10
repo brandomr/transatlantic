@@ -1,13 +1,13 @@
 {% extends 'transatlantic/base.html' %}
 
 {% block body_block %}
-<div class="hero-unit">
+<div class="jumbotron">
     <h1>Update your profile</h1>
     <br />
 
     <div class="container">
       
-       <form class="form-signin span8" id="profile_form" method="post" action="/transatlantic/edit/"
+       <form class="form-signin col-md-12" id="profile_form" method="post" action="/transatlantic/edit/"
               enctype="multipart/form-data">
 
             {% csrf_token %}
@@ -18,9 +18,12 @@
             {% endfor %}
 
             {% for field in profile_form.visible_fields %}
+          
+            <div class="form-group">
+            <label>{{ field.help_text }}</label>
+            {{ field }}
             {{ field.errors }}
-            {{ field.help_text }}<br />
-            {{ field }}<br />
+			</div>
             {% endfor %}
 
             <br />

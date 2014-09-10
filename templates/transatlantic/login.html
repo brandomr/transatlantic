@@ -1,10 +1,18 @@
 {% extends 'transatlantic/base.html' %}
 {% block body_block %}
-<div class="hero-unit">
+<div class="jumbotron">
+
+{% if user.is_authenticated %}
+    <h1>Your already logged in!</h1>
+
+{% else %}
+
     <h1>Login to Transatlantic</h1>
 
     <div class="container">
-    <form class="form-signin span4" id="login_form" method="post" action="/transatlantic/login/">
+    <form class="form-horizontal" id="login_form" method="post" action="/transatlantic/login/">
+        <div class="form-group">
+
         <h2 class="form-signin-heading">Please sign in</h2>
         {% csrf_token %}
 
@@ -14,14 +22,28 @@
         <p><strong>Your Transatlantic account is currently disabled; we can't log you in!</strong></p>
         {% endif %}
 
-        Username: <input type="text" class="input-block-level" placeholder="Username" name="username" value="" size="50" />
-        <br />
-        Password: <input type="password" class="input-block-level" placeholder="Password" name="password" value="" size="50" />
-        <br />
+  <div class="form-group">
+    <label for="inputuser" class="col-sm-2 control-label">Username:</label>
+    <div class="col-sm-6">
+      <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <label for="password" class="col-sm-2 control-label">Password:</label>
+    <div class="col-sm-6">
+      <input type="password" class="form-control" id="password" name="password" placeholder="password">
+    </div>
+  </div>
+  
         <button class="btn btn-primary" type="submit">Sign in</button>
+    	</div>
     </form>
 
     </div>
     <!-- /container -->
+
+{% endif %}
+
 </div>
 {% endblock %}

@@ -3,7 +3,7 @@
 {% block title %}Add Page{% endblock %}
 
 {% block body_block %}
-<div class="hero-unit">
+<div class="jumbotron">
         <h1>Add a Note</h1>
     
     </br>
@@ -21,11 +21,14 @@ mandatory form width formatting-->
 
 
             {% for field in form.visible_fields %}
-                {{ field.errors }}
-                {{ field.help_text }}
-                </br>
+            <div class="form-group">   
+                
+                <label>{{ field.help_text }}</label>
               	{{ field }}
-                </br>
+                {{ field.errors }}
+
+			</div>
+			
                 {% endfor %}
              
              <!-- <input type="hidden" name="drafter" value="{{ user.user }}" />   -->                
